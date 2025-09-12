@@ -1,11 +1,15 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 import {
   useGetRoomsQuery,
   useDeleteRoomMutation,
   useUpdateRoomMutation,
-  useUpdateRoomWithActionMutation,
-  useDeleteRoomWithActionMutation,
 } from "./roomsApi";
+import {
+  useCheckoutBookingMutation,
+  useDeleteBookingMutation,
+  useGetBookingQuery,
+} from "../bookings/bookingsApi";
 
 const RoomList = () => {
   // Filter states
@@ -24,10 +28,9 @@ const RoomList = () => {
     open: false,
     type: "", // 'delete' or 'update'
     room: null,
-    bookingInfo: null,
-    options: [],
+    bookingId: null,
     message: "",
-    selectedAction: null,
+    actionType: "", // 'checkout' or 'delete'
   });
 
   const {
@@ -38,11 +41,19 @@ const RoomList = () => {
   } = useGetRoomsQuery(filters);
   const [deleteRoom] = useDeleteRoomMutation();
   const [updateRoom] = useUpdateRoomMutation();
-  const [updateRoomWithAction] = useUpdateRoomWithActionMutation();
-  const [deleteRoomWithAction] = useDeleteRoomWithActionMutation();
+  const [checkoutBooking] = useCheckoutBookingMutation();
+  const [deleteBooking] = useDeleteBookingMutation();
 
   const rooms = response?.data || [];
   const pagination = response?.pagination || {};
+
+  // Fetch booking details when dialog opens with a bookingId
+  const { data: bookingData } = useGetBookingQuery(
+    confirmationDialog.bookingId,
+    {
+      skip: !confirmationDialog.bookingId,
+    }
+  );
 
   const handleEdit = (room) => {
     setEditingId(room._id);
@@ -55,20 +66,23 @@ const RoomList = () => {
       setEditingId(null);
       setEditForm({});
       refetch();
+      toast.success("Room updated successfully!");
     } catch (error) {
-      if (error.data?.requiresAction) {
+      // FIXED: Check the correct response structure
+      if (error.data?.data?.requiresAction) {
         // Show confirmation dialog for booking conflict
         setConfirmationDialog({
           open: true,
           type: "update",
           room: { _id: editingId, ...editForm },
-          bookingInfo: error.data.bookingDetails,
-          options: error.data.options,
-          message: `Room ${error.data.bookingDetails.roomNo} is currently booked by ${error.data.bookingDetails.guestName}.`,
-          selectedAction: null,
+          bookingId: error.data.data.bookingId,
+          message:
+            "This room has an active booking. What would you like to do with the current booking?",
+          actionType: "",
         });
       } else {
         console.error("Failed to update room:", error);
+        toast.error("Failed to update room");
       }
     }
   };
@@ -90,48 +104,52 @@ const RoomList = () => {
     try {
       await deleteRoom(roomId).unwrap();
       refetch();
+      toast.success("Room deleted successfully!");
     } catch (error) {
-      if (error.data?.requiresAction) {
+      // FIXED: Check the correct response structure
+      if (error.data?.data?.requiresAction) {
         // Show confirmation dialog for booking conflict
         setConfirmationDialog({
           open: true,
           type: "delete",
           room: rooms.find((r) => r._id === roomId),
-          bookingInfo: error.data.bookingDetails,
-          options: error.data.options,
-          message: `Room ${error.data.bookingDetails.roomNo} is currently booked by ${error.data.bookingDetails.guestName}.`,
-          selectedAction: null,
+          bookingId: error.data.data.bookingId,
+          message:
+            "This room has an active booking. What would you like to do with the current booking?",
+          actionType: "",
         });
       } else {
         console.error("Failed to delete room:", error);
+        toast.error("Failed to delete room");
       }
     }
   };
 
   const handleConfirmAction = async () => {
-    const { type, room, selectedAction } = confirmationDialog;
+    const { type, room, bookingId, actionType } = confirmationDialog;
 
-    if (!selectedAction) {
-      alert("Please select an action to proceed");
+    if (!actionType) {
+      toast.error("Please select an action");
       return;
     }
 
     try {
+      // First handle the booking based on user selection
+      if (actionType === "checkout") {
+        await checkoutBooking(bookingId).unwrap();
+        toast.success("Booking checked out successfully!");
+      } else if (actionType === "delete") {
+        await deleteBooking(bookingId).unwrap();
+        toast.success("Booking deleted successfully!");
+      }
+
+      // Then handle the room operation
       if (type === "delete") {
-        // Force delete with selected action
-        await deleteRoomWithAction({
-          id: room._id,
-          forceDelete: true,
-          checkoutBooking: selectedAction === "checkout",
-        }).unwrap();
+        await deleteRoom(room._id).unwrap();
+        toast.success("Room deleted successfully!");
       } else if (type === "update") {
-        // Force update with selected action
-        await updateRoomWithAction({
-          id: room._id,
-          ...room,
-          forceUpdate: true,
-          checkoutBooking: selectedAction === "checkout",
-        }).unwrap();
+        await updateRoom({ id: room._id, ...room }).unwrap();
+        toast.success("Room updated successfully!");
       }
 
       refetch();
@@ -139,13 +157,13 @@ const RoomList = () => {
         open: false,
         type: "",
         room: null,
-        bookingInfo: null,
-        options: [],
+        bookingId: null,
         message: "",
-        selectedAction: null,
+        actionType: "",
       });
     } catch (error) {
       console.error("Failed to complete action:", error);
+      toast.error("Failed to complete operation");
     }
   };
 
@@ -190,51 +208,56 @@ const RoomList = () => {
             <h3 className="text-lg font-semibold mb-3">Booking Conflict</h3>
             <p className="text-gray-700 mb-4">{confirmationDialog.message}</p>
 
-            {confirmationDialog.bookingInfo && (
+            {bookingData?.data && (
               <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mb-4">
                 <p className="text-sm text-yellow-800">
-                  <strong>Guest:</strong>{" "}
-                  {confirmationDialog.bookingInfo.guestName}
+                  <strong>Guest:</strong> {bookingData.data.guestName}
+                  <br />
+                  <strong>Room:</strong> {bookingData.data.roomId.roomNo}
                   <br />
                   <strong>Check-in:</strong>{" "}
-                  {new Date(
-                    confirmationDialog.bookingInfo.checkInDate
-                  ).toLocaleDateString()}
+                  {new Date(bookingData.data.checkInDate).toLocaleDateString()}
                   <br />
-                  <strong>Nights:</strong>{" "}
-                  {confirmationDialog.bookingInfo.nights}
+                  <strong>Nights:</strong> {bookingData.data.nights}
                 </p>
               </div>
             )}
 
-            {/* Action Options */}
+            {/* Action Buttons */}
             <div className="mb-4">
               <p className="font-medium mb-2">Select an action:</p>
-              {confirmationDialog.options.map((option) => (
-                <div key={option.action} className="mb-2">
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="bookingAction"
-                      value={option.action}
-                      checked={
-                        confirmationDialog.selectedAction === option.action
-                      }
-                      onChange={() =>
-                        setConfirmationDialog((prev) => ({
-                          ...prev,
-                          selectedAction: option.action,
-                        }))
-                      }
-                      className="mr-2"
-                    />
-                    <span className="font-medium">{option.label}</span>
-                    <p className="text-sm text-gray-600 ml-6">
-                      {option.description}
-                    </p>
-                  </label>
-                </div>
-              ))}
+              <div className="flex space-x-3">
+                <button
+                  onClick={() =>
+                    setConfirmationDialog((prev) => ({
+                      ...prev,
+                      actionType: "checkout",
+                    }))
+                  }
+                  className={`px-4 py-2 rounded-md ${
+                    confirmationDialog.actionType === "checkout"
+                      ? "bg-green-600 text-white"
+                      : "bg-green-100 text-green-800"
+                  }`}
+                >
+                  Checkout Booking
+                </button>
+                <button
+                  onClick={() =>
+                    setConfirmationDialog((prev) => ({
+                      ...prev,
+                      actionType: "delete",
+                    }))
+                  }
+                  className={`px-4 py-2 rounded-md ${
+                    confirmationDialog.actionType === "delete"
+                      ? "bg-red-600 text-white"
+                      : "bg-red-100 text-red-800"
+                  }`}
+                >
+                  Delete Booking
+                </button>
+              </div>
             </div>
 
             <div className="flex justify-end space-x-3">
@@ -244,10 +267,9 @@ const RoomList = () => {
                     open: false,
                     type: "",
                     room: null,
-                    bookingInfo: null,
-                    options: [],
+                    bookingId: null,
                     message: "",
-                    selectedAction: null,
+                    actionType: "",
                   })
                 }
                 className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
@@ -256,9 +278,10 @@ const RoomList = () => {
               </button>
               <button
                 onClick={handleConfirmAction}
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                disabled={!confirmationDialog.actionType}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Proceed
+                Confirm
               </button>
             </div>
           </div>

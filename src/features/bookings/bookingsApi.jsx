@@ -23,6 +23,12 @@ export const bookingsApi = createApi({
       providesTags: ["Booking"],
     }),
 
+    // Get single booking by ID
+    getBooking: builder.query({
+      query: (id) => `/bookings/${id}`,
+      providesTags: (result, error, id) => [{ type: "Booking", id }],
+    }),
+
     // Create a new booking
     createBooking: builder.mutation({
       query: (bookingData) => ({
@@ -78,6 +84,7 @@ export const bookingsApi = createApi({
 // Export hooks for usage in components
 export const {
   useGetBookingsQuery,
+  useGetBookingQuery, // Added this export
   useCreateBookingMutation,
   useUpdateBookingMutation,
   useDeleteBookingMutation,
