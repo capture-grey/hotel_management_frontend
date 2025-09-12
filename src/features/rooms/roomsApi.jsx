@@ -49,6 +49,26 @@ export const roomsApi = createApi({
       }),
       invalidatesTags: ["Room"],
     }),
+    // Add endpoints for handling booking conflicts
+    updateRoomWithAction: builder.mutation({
+      query: ({ id, forceUpdate, checkoutBooking, ...updates }) => ({
+        url: `/rooms/${id}`,
+        method: "PUT",
+        body: { ...updates, forceUpdate, checkoutBooking },
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Room", id },
+        "Room",
+      ],
+    }),
+    deleteRoomWithAction: builder.mutation({
+      query: ({ id, forceDelete, checkoutBooking }) => ({
+        url: `/rooms/${id}`,
+        method: "DELETE",
+        body: { forceDelete, checkoutBooking },
+      }),
+      invalidatesTags: ["Room"],
+    }),
   }),
 });
 
@@ -58,4 +78,6 @@ export const {
   useAddRoomMutation,
   useUpdateRoomMutation,
   useDeleteRoomMutation,
+  useUpdateRoomWithActionMutation,
+  useDeleteRoomWithActionMutation,
 } = roomsApi;
