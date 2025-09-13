@@ -3,9 +3,10 @@ import Rooms from "./pages/Rooms";
 import AddRoom from "./pages/AddRoom";
 import Bookings from "./pages/Bookings";
 import CreateBooking from "./pages/CreateBooking";
+import BookingSummary from "./pages/BookingSummary";
 import BookingList from "./features/bookings/BookingList";
 import CreateBookingForm from "./features/bookings/CreateBookingForm";
-import BookingSummary from "./features/bookings/BookingSummary";
+//import BookingSummary from "./features/bookings/BookingSummary";
 
 function App() {
   return (
