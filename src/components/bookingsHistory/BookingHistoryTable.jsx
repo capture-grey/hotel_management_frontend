@@ -12,7 +12,7 @@ const BookingHistoryTable = ({
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-2">
         <h3 className="text-lg md:text-xl font-semibold">Booking History</h3>
         <div className="flex items-center space-x-2">
-          <label className="text-xs md:text-sm font-medium text-gray-700 whitespace-nowrap">
+          <label className="text-xs md:text-sm font-medium text-gray-700   ">
             Results per page:
           </label>
           <select
@@ -32,13 +32,15 @@ const BookingHistoryTable = ({
         <table className="w-full border border-gray-200 text-sm md:text-base">
           <thead>
             <tr className="bg-gray-100">
-              <th className="p-2 text-left">Guest</th>
-              <th className="p-2 text-left hidden md:table-cell">Room No</th>
-              <th className="p-2 text-left hidden lg:table-cell">Type</th>
-              <th className="p-2 text-left">Check-in</th>
-              <th className="p-2 text-left hidden md:table-cell">Check-out</th>
-              <th className="p-2 text-right">Nights</th>
-              <th className="p-2 text-right hidden lg:table-cell">Amount</th>
+              <th className="p-2 text-center">Guest</th>
+              <th className="p-2 text-center hidden md:table-cell">Room No</th>
+              <th className="p-2 text-center hidden lg:table-cell">Type</th>
+              <th className="p-2 text-center">Check-in</th>
+              <th className="p-2 text-center hidden md:table-cell">
+                Check-out
+              </th>
+              <th className="p-2 text-center">Nights</th>
+              <th className="p-2 text-center hidden lg:table-cell">Amount</th>
               <th className="p-2 text-center">Status</th>
             </tr>
           </thead>
@@ -52,22 +54,22 @@ const BookingHistoryTable = ({
             ) : (
               history.map((record) => (
                 <tr key={record._id} className="border-t hover:bg-gray-50">
-                  <td className="p-2 text-left font-medium">
+                  <td className="p-2 text-center font-medium">
                     {record.guestName}
                   </td>
-                  <td className="p-2 text-left hidden md:table-cell">
+                  <td className="p-2 text-center hidden md:table-cell">
                     {record.roomNo}
                   </td>
-                  <td className="p-2 text-left hidden lg:table-cell capitalize">
+                  <td className="p-2 text-center hidden lg:table-cell capitalize">
                     {record.roomType}
                   </td>
-                  <td className="p-2 text-left whitespace-nowrap">
+                  <td className="p-2 text-center   ">
                     {new Date(record.checkInDate).toLocaleDateString()}
                   </td>
-                  <td className="p-2 text-left hidden md:table-cell whitespace-nowrap">
+                  <td className="p-2 text-center hidden md:table-cell   ">
                     {new Date(record.checkOutDate).toLocaleDateString()}
                   </td>
-                  <td className="p-2 text-right whitespace-nowrap">
+                  <td className="p-2 text-center   ">
                     <span className="md:hidden">
                       {record.actualNightsStayed}
                     </span>
@@ -75,7 +77,7 @@ const BookingHistoryTable = ({
                       {record.nights} / {record.actualNightsStayed}
                     </span>
                   </td>
-                  <td className="p-2 text-right hidden lg:table-cell whitespace-nowrap">
+                  <td className="p-2 text-center hidden lg:table-cell   ">
                     ${record.totalAmount} / ${record.actualTotalAmount}
                   </td>
                   <td className="p-2 text-center">

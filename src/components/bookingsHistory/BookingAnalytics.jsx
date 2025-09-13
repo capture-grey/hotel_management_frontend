@@ -32,11 +32,11 @@ const BookingAnalytics = ({ analytics }) => {
       <div className="bg-white p-3 md:p-4 rounded-lg shadow-md border border-gray-200 min-w-[280px] md:min-w-0">
         <div className="flex items-center">
           <div className="rounded-full bg-purple-100 p-2 md:p-3 mr-3 md:mr-4">
-            <span className="text-purple-600 text-lg md:text-xl">🏨</span>
+            <span className="text-purple-600 text-lg md:text-xl">🧾</span>
           </div>
           <div>
             <p className="text-xs md:text-sm text-gray-600">
-              Avg Stay (Nights)
+              Average Stay (Nights)
             </p>
             <p className="text-xl md:text-2xl font-bold text-purple-600">
               {analytics.averageStayDuration?.toFixed(1) || "0"}

@@ -6,12 +6,14 @@ const BookingTable = ({ bookings, refetch }) => {
       <table className="w-full border border-gray-200">
         <thead>
           <tr className="bg-gray-100">
-            <th className="p-2 text-left">Guest Name</th>
-            <th className="p-2 text-left">Room No</th>
-            <th className="p-2 text-right">Nights</th>
-            <th className="p-2 text-left">Check-in Date</th>
-            <th className="p-2 text-right">Total Price</th>
-            <th className="p-2 text-center">Actions</th>
+            <th className="p-3 text-center">Guest Name</th>
+            <th className="p-3 text-center">Room No</th>
+            <th className="p-3 text-center ">Nights</th>{" "}
+            {/* Added right padding */}
+            <th className="p-3 text-center">Check-in Date</th>{" "}
+            {/* Added left padding */}
+            <th className="p-3 text-center">Total Price</th>
+            <th className="p-3 text-center">Actions</th>
           </tr>
         </thead>
         <tbody>

@@ -46,7 +46,7 @@ export const bookingsApi = createApi({
         method: "PUT",
         body: updates,
       }),
-      invalidatesTags: ["Booking"],
+      invalidatesTags: ["Booking", "Room"],
     }),
 
     // Delete booking
@@ -55,7 +55,7 @@ export const bookingsApi = createApi({
         url: `/bookings/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Booking"],
+      invalidatesTags: ["Booking", "Room"],
     }),
 
     // Checkout booking
@@ -64,7 +64,7 @@ export const bookingsApi = createApi({
         url: `/bookings/${id}/checkout`,
         method: "POST",
       }),
-      invalidatesTags: ["Booking", "BookingHistory"],
+      invalidatesTags: ["Booking", "BookingHistory", "Room"],
     }),
 
     // Get booking history (includes analytics in response)

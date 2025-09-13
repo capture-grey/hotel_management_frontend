@@ -64,7 +64,7 @@ const BookingRow = ({ booking, refetch }) => {
   };
 
   return (
-    <tr key={booking._id} className="border-t">
+    <tr className="border-t hover:bg-gray-50">
       {editingId === booking._id ? (
         <BookingEditForm
           editForm={editForm}
@@ -75,33 +75,36 @@ const BookingRow = ({ booking, refetch }) => {
         />
       ) : (
         <>
-          <td className="p-2 text-left">{booking.guestName}</td>
-          <td className="p-2 text-left">{booking.roomId?.roomNo}</td>
-          <td className="p-2 text-right">{booking.nights}</td>
-          <td className="p-2 text-left">
+          <td className="p-3 text-center font-medium">{booking.guestName}</td>
+          <td className="p-3 text-center">{booking.roomId?.roomNo}</td>
+          <td className="p-3 text-center">{booking.nights}</td>{" "}
+          {/* Added right padding */}
+          <td className="p-3 text-center ">
+            {" "}
+            {/* Added left padding */}
             {new Date(booking.checkInDate).toLocaleDateString()}
           </td>
-          <td className="p-2 text-right">
+          <td className="p-3 text-center ">
             $
             {booking.roomId
               ? booking.nights * booking.roomId.pricePerNight
               : "N/A"}
           </td>
-          <td className="p-2 text-center space-x-2">
+          <td className="p-3 text-center space-x-2">
             <button
-              className="px-2 py-1 bg-blue-500 text-white rounded text-sm"
+              className="px-2 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition-colors"
               onClick={handleEdit}
             >
               Edit
             </button>
             <button
-              className="px-2 py-1 bg-green-600 text-white rounded text-sm"
+              className="px-2 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 transition-colors"
               onClick={handleCheckout}
             >
               Checkout
             </button>
             <button
-              className="px-2 py-1 bg-red-500 text-white rounded text-sm"
+              className="px-2 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600 transition-colors"
               onClick={handleDelete}
             >
               Delete
