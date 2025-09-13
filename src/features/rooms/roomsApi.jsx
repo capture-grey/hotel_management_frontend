@@ -2,7 +2,9 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const roomsApi = createApi({
   reducerPath: "roomsApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000/api" }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: "https://hotel-management-backend-seven.vercel.app/api",
+  }),
   tagTypes: ["Room"],
   endpoints: (builder) => ({
     getRooms: builder.query({

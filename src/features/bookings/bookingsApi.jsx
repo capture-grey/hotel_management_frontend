@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const bookingsApi = createApi({
   reducerPath: "bookingsApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api",
+    baseUrl: "https://hotel-management-backend-seven.vercel.app/api",
     prepareHeaders: (headers) => {
       headers.set("Content-Type", "application/json");
       return headers;
