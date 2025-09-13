@@ -54,4 +54,4 @@ const BookingEditForm = ({
   );
 };
 
-export default BookingEditForm; // Make sure this line is at the end
+export default BookingEditForm;

@@ -97,10 +97,10 @@ const RoomFilters = ({
           onChange={handleFilterChange}
           className="border border-gray-300 rounded-md px-3 py-1"
         >
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="20">20</option>
-          <option value="50">50</option>
+          <option value="12">12</option>
+          <option value="24">24</option>
+          <option value="36">36</option>
+          <option value="60">00</option>
         </select>
       </div>
     </div>
