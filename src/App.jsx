@@ -1,10 +1,11 @@
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import RoomList from "./features/rooms/RoomList";
-import AddRoomForm from "./features/rooms/AddRoomForm";
+import Rooms from "./pages/Rooms";
+import AddRoom from "./pages/AddRoom";
+import Bookings from "./pages/Bookings";
+import CreateBooking from "./pages/CreateBooking";
 import BookingList from "./features/bookings/BookingList";
 import CreateBookingForm from "./features/bookings/CreateBookingForm";
 import BookingSummary from "./features/bookings/BookingSummary";
-import "./App.css";
 
 function App() {
   return (
@@ -44,11 +45,12 @@ function App() {
 
       <main className="container mx-auto p-4">
         <Routes>
-          <Route path="/" element={<RoomList />} />
-          <Route path="/rooms" element={<RoomList />} />
-          <Route path="/create-room" element={<AddRoomForm />} />
-          <Route path="/bookings" element={<BookingList />} />
-          <Route path="/create-booking" element={<CreateBookingForm />} />
+          <Route path="/" element={<Rooms />} />{" "}
+          {/* Changed from RoomList to Rooms */}
+          <Route path="/rooms" element={<Rooms />} />
+          <Route path="/create-room" element={<AddRoom />} />
+          <Route path="/bookings" element={<Bookings />} />
+          <Route path="/create-booking" element={<CreateBooking />} />
           <Route path="/booking-summary" element={<BookingSummary />} />
         </Routes>
       </main>
