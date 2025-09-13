@@ -36,7 +36,7 @@ export const bookingsApi = createApi({
         method: "POST",
         body: bookingData,
       }),
-      invalidatesTags: ["Booking"],
+      invalidatesTags: ["Booking", "Room"],
     }),
 
     // Update booking
@@ -84,7 +84,7 @@ export const bookingsApi = createApi({
 // Export hooks for usage in components
 export const {
   useGetBookingsQuery,
-  useGetBookingQuery, // Added this export
+  useGetBookingQuery,
   useCreateBookingMutation,
   useUpdateBookingMutation,
   useDeleteBookingMutation,
